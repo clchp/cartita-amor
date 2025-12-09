@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cartita para ti 💌</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cardo:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffdce9;
+            font-family: "Cardo", serif;
+            overflow: auto;
+        }
+
+        .flower-border {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .flower-border span {
+            position: absolute;
+            font-size: 1.6rem;
+            opacity: 0.8;
+            animation: float 8s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%   { transform: translateY(0); }
+            50%  { transform: translateY(-8px); }
+            100% { transform: translateY(0); }
+        }
+
+        .scene {
+            position: relative;
+            z-index: 1;
+            width: 360px;
+            height: 340px; /* más alto */
+            perspective: 1400px;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .envelope {
+            position: absolute;
+            inset: 0;
+            margin: auto;
+            width: 100%;
+            height: 260px;
+            background: #fce5cf;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+            border-radius: 12px;
+            overflow: visible;
+            transform-style: preserve-3d;
+        }
+
+        .envelope-back {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #f2c099, #f6d1aa);
+            border-radius: 12px;
+            z-index: 0;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(135deg, #f5b586, #f0a776);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            transform-origin: top center;
+            transition: transform 1s ease-in-out;
+            border-radius: 12px 12px 0 0;
+            z-index: 3;
+        }
+
+        .envelope-front {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            background: #f8d3ac;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            border-radius: 0 0 12px 12px;
+            z-index: 1;
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 52px;
+            height: 52px;
+            background: radial-gradient(circle at 30% 30%, #ffdbe5, #f06b9b);
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: white;
+            z-index: 4;
+        }
+
+        /* ===================== CARTA ===================== */
+        .letter {
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            right: 10px;
+
+            /* 💗 HACE LA CARTA MUY LARGA */
+            bottom: -1200px; 
+
+            background: #fdf4df;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            padding: 2.2rem 2rem;
+
+            transform-origin: bottom center;
+            transform: translateY(50%) rotateX(90deg);
+            opacity: 0;
+            transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+
+            z-index: 5;
+        }
+
+        .letter-title {
+            font-family: "Great Vibes", cursive;
+            font-size: 2.2rem;
+            color: #c0526f;
+            text-align: center;
+        }
+
+        .letter-body {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #5e3a37;
+            text-align: justify;
+        }
+
+        .letter-footer {
+            text-align: right;
+            font-style: italic;
+            color: #7c4f4b;
+            font-size: 1rem;
+        }
+
+        /* FOTO */
+        .photo-wrapper {
+            align-self: center;
+            position: relative;
+            width: 200px;
+            height: 150px;
+            margin-top: 10px;
+        }
+
+        .photo-frame {
+            position: absolute;
+            inset: 0;
+            background: #ffeef2;
+            border-radius: 12px;
+            border: 2px solid #f2a3c2;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+            transform: rotate(-15deg);
+            overflow: hidden;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-frame::before,
+        .photo-frame::after {
+            content: "✿ ✿ ✿";
+            position: absolute;
+            color: #e56b93;
+            font-size: 0.9rem;
+        }
+
+        .photo-frame::before {
+            top: 4px;
+            left: 10px;
+        }
+
+        .photo-frame::after {
+            bottom: 4px;
+            right: 10px;
+        }
+
+        /* ====== ESTADO ABIERTO ====== */
+        .envelope-wrapper.open .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .envelope-wrapper.open .letter {
+            opacity: 1;
+            transform: translateY(-10%) rotateX(0deg);
+        }
+
+        .envelope-wrapper.open .envelope-front {
+            transform: translateY(180px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="flower-border">
+        <span>🌸</span><span>🌷</span><span>🌸</span><span>🌹</span><span>🌸</span><span>🌷</span>
+    </div>
+
+    <div class="scene">
+        <div class="envelope-wrapper" id="envelopeWrapper">
+            <div class="envelope">
+
+                <div class="envelope-back"></div>
+                <div class="envelope-flap"></div>
+                <div class="envelope-front"></div>
+
+                <div class="seal">💗</div>
+
+                <div class="letter">
+                    <div class="letter-title">Para ti, mi gatita</div>
+
+                    <div class="letter-body">
+                            A pesar de que la distancia nos tiene alejadas, no sabes
+                            lo mucho que me enamoro de ti cada día. Solo con la idea
+                            de tenerte como mi novia, me vuelve loca y no puedo esperar
+                            por tenerte en mis brazos, llenarte de muchos besitos,
+                            sacarte muchas sonrisas, sentir tu palpitar, verte a esos
+                            hermosos ojos que tienes, que son las puertas a tu hermosa
+                            alma. No puedo haber escogido una mejor persona para 
+                            compartir mi vida, mi amor. 
+
+                            Hoy cumplimos 4 meses, 4 meses de puro amor, 4 meses de
+                            felicidad, 4 meses en los que nos juramos amor eterno y
+                            ser fuertes a pesar de todo. Mi novia preciosa, lucharé
+                            por lo bonito que tenemos las veces que sean necesarias,
+                            porque nadie te podrá separar de mí. En esta, en las siguientes
+                            y en las posteriores, siempre serás mi amor incondicional.
+                            Hoy prometo ser una persona más fuerte para ti, a luchar
+                            pese a todo, porque tú eres la persona que siempre estuve
+                            buscando. Nunca había encontrado a una persona con la que
+                            congeniase tanto como lo hago contigo, eres mi pieza faltante,
+                            eres mi amor, mi ser, mi todo. Mi corazón te pertenece,
+                            siempre.
+                            <br><br>
+                            Mi dulce novia, las palabras no son suficientes cuando se
+                            trata de ti. Mi amor es etéreo y sublime, te amo, cada día
+                            te amo más, no puedo evitar amarte todos los días más. 
+                            Mi amor de verano, mi amor de otoño, mi amor de invierno,
+                            mi amor de primavera... te amo priscila, siempre.
+                    </div>
+
+                    <!-- FOTO DECORADA -->
+                    <div class="photo-wrapper">
+                        <div class="photo-frame">
+                            <img src="imagen.jpg" alt="Nuestra foto"> 
+                        </div>
+                    </div>
+
+                    <div class="letter-footer">
+                        Con todo mi amor,<br>Tu clau
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const envelopeWrapper = document.getElementById("envelopeWrapper");
+        let isOpen = false;
+
+        envelopeWrapper.addEventListener("click", () => {
+            isOpen = !isOpen;
+            envelopeWrapper.classList.toggle("open", isOpen);
+        });
+    </script>
+</body>
+</html>
